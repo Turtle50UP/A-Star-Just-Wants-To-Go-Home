@@ -1,0 +1,47 @@
+Author: Ruihao Ye
+Scripts:
+    - InputManager: Manages input to a player, parses the axes that detect
+      input to a particular set of controls, produces relavent data from a
+      particular button press (hold time etc.).
+        - It requires its own GameObject, like other Managers
+        - Planned to allow for custom buttons in the editor rather than in
+        the script
+    - InputState: Manages input parsed from an InputManager to a specific
+      Player controlled character, also used for managing some animations/sprite
+      states.
+        - Required to be on a player object
+    - GameManager: This should be new each time, manages game events,
+      specifically with regards to updating UI and allowing for communication
+      between existing GameObjects.
+        - Required to be on its own GameObject
+    - PhysicsManager: Contains constants relevant to physics of the game,
+      best used as something inherited to a more specific Physics Managing
+      class.
+        - Required to be on its own GameObject
+    - Spawner: This allows for the spawning from a pool of prefabs, best used
+      as something inherited.
+        - Spawners should be on its own GameObject
+    - RecycleGameObject: Required for objects to be placed in an object pool,
+      reduce reinstantiation lag
+    - ObjectPool: pool of spawned objects from a spawner
+        - Needs debugging
+    - AbstractBehavior: A to be inherited class which contains references to
+    GameManager, PhysicsManager, and also does some initializations on more
+    local values.
+        - Does not need to be on a player
+    - CollisionState: This allows for player interaction with the world in
+    a more robust method than Unity's default collisions.  Colliders are defined
+    by a string and a region on the object.
+        - Needs to be on a player
+        - Plans to expand the collider shapes from rectangles to other shapes
+
+How to set up a scene with these scripts:
+    1. Create gm, pm, im objects in the scene
+    2. Set up im controls with necessary inputs.
+    3. Make a new gm script
+    4. Link gm with im and pm
+    5. Make a player object
+    6. Add a cs, is
+        1. If prefab, make a spawner and a rgo
+    7. Create some cs
+
