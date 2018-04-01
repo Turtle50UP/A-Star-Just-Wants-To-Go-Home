@@ -84,4 +84,20 @@ public class InputState : MonoBehaviour {
             return 0;
         }
 	}
+    
+    public void ResetHoldTime(Buttons key)
+    {
+        if(buttonStates.ContainsKey(key))
+        {
+            buttonStates[key].holdTime = 0f;
+        }
+    }
+
+    public void SetHoldTime(Buttons key,float newHoldTime)
+    {
+        if(buttonStates.ContainsKey(key) && newHoldTime > 0)
+        {
+            buttonStates[key].holdTime = newHoldTime;
+        }
+    }
 }

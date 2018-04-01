@@ -1,79 +1,93 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿/* Contains a class for utilizing recyclable game objects
+ */
+
 using UnityEngine;
 
 public class PlayerMove : AbstractBehavior {
 
-    public /*static*/ /*const*/ float maxspeed = 10;
-    public GameManager gm;
+    public /*static*/ /*const*/ float maxspeed = 10f;
+    public float maxaccel = 1f;
+    public /*static*/ /*const*/ float boostMultiplier = 2.0f;
+    public float sigmoidStretch = 1f;
+    public float breakAccel = 2f;
+    Vector2 movementTimes;
+
+    public float heldUpperBound = 4;
 
     float epsilon;
-
-    float ShiftedSigmoid(float x, float maxval){
-        float shift = -0.5f;
-        return Sigmoid(x, maxval, shift);
-    }
 
 	// Use this for initialization
 	void Start () {
         epsilon = 
             GameObject.Find("GameManager").GetComponent<GameManager>().epsilon;
+        movementTimes = Vector2.zero;
 	}
-	
-	// Update is called once per frame
-    protected virtual void Update () {
 
-        bool[] directionals = new bool[];
+    float UpdateMovementTime(int posIndex, int negIndex){
+        bool posDir = inputState.GetButtonValue(inputButtons[posIndex]);
+        bool negDir = inputState.GetButtonValue(inputButtons[negIndex]);
 
-        bool isRight = inputState.GetButtonValue(inputButtons[0]);
-		bool isLeft = inputState.GetButtonValue(inputButtons[1]);
-		bool isUp = inputState.GetButtonValue(inputButtons[2]);
-		bool isDown = inputState.GetButtonValue(inputButtons[3]);
+        float posHeld = inputState.GetButtonHoldTime(inputButtons[posIndex]);
+        float negHeld = inputState.GetButtonHoldTime(inputButtons[negIndex]);
 
-        bool isRunning = inputState.GetButtonValue(inputButtons[2]);
-
-        //If on the ground...
-        if (true) //collisionState.colliderStatus[standing])
-        {
-            //Holding either left or right directional
-            if (isRight || isLeft)
-            {
-
-                //Apply appropriate speed to character.
-                float tempSpeed = speed;
-                if (isRunning && runMultiplier > 0)
-                {
-                    tempSpeed *= runMultiplier;
-                }
-                //direction = (float)inputState.direction;
-                float velx = tempSpeed * direction;
-
-                body2d.velocity = new Vector2(velx, body2d.velocity.y);
-            }
-
-            //On ground, no directional
-            else{
-
-                //If standing,
-                if(inputState.absVelX < epsilon){
-                    
-                }
-
-                //Else calculate and apply drag
-                //Quadratic drag: -kv^2
-                else{
-                    float velx = body2d.velocity.x;
-                    velx = velx - ((1 / drag) * (velx * velx)*
-                        (velx > 0 ? 1 : -1));
-                    if ((int)Mathf.Sign(velx) != 
-                        (int)Mathf.Sign(body2d.velocity.x)){
-                        velx = 0;
-                    }
-                    body2d.velocity = new Vector2(velx, body2d.velocity.y);
-                }
-            }
+        float axisHolding;
+        if(posDir ^ negDir){
+            axisHolding = posDir ? 1f : -1f;
+        }
+        else{
+            axisHolding = 0.0f;
+            inputState.ResetHoldTime(inputButtons[posIndex]);
+            inputState.ResetHoldTime(inputButtons[negIndex]);
         }
 
-        //Else in the air...  Split this off into its own class`
-	}
+        float curmovementtime = (posHeld + negHeld) * axisHolding;
+        return curmovementtime;
+    }
+	
+	// Update is called once per frame
+    protected virtual void FixedUpdate () {
+		bool isBoosting = inputState.GetButtonValue(inputButtons[4]);
+        bool isBreaking = inputState.GetButtonValue(inputButtons[5]);
+        Vector2 velocity = body2d.velocity;
+        float tempMaxSpeed = maxspeed * (isBoosting ? boostMultiplier : 1);
+        float tempMaxAccel = maxaccel * (isBoosting ? boostMultiplier : 1);
+        Vector2 accel = Vector2.zero;
+        GameObject sprite = this.gameObject.transform.GetChild(0).gameObject;
+
+        if(isBreaking){
+            Debug.Log("breaking");
+            Vector2 unit = velocity.normalized;
+            unit *= -breakAccel;
+            float velmag = velocity.magnitude;
+            if(velmag < breakAccel){
+                body2d.velocity = Vector2.zero;
+            }
+            else{
+                body2d.velocity += unit;
+            }
+        }
+        else{
+
+            accel = new Vector2(UpdateMovementTime(0,1),
+                                UpdateMovementTime(2,3));
+            accel = new Vector2(fl.TwoWaySigmoid(accel.x,sigmoidStretch),
+                                fl.TwoWaySigmoid(accel.y,sigmoidStretch));
+            accel *= tempMaxAccel;
+            velocity += accel * Time.fixedDeltaTime;
+            if(velocity.magnitude > tempMaxSpeed){
+                velocity = velocity.normalized * tempMaxSpeed;
+            }
+            body2d.velocity = velocity;
+        }
+
+        if(body2d.velocity.magnitude > epsilon){
+            float angle = Vector2.Angle(new Vector2(1.0f,0f),velocity) + (
+                    velocity.y > 0 ? - 90f : +90f);
+            angle *= velocity.y > 0 ? 1 : -1;
+            sprite.transform.eulerAngles = new Vector3(
+                sprite.transform.eulerAngles.x,
+                sprite.transform.eulerAngles.y,
+                angle);
+        }
+    }
 }

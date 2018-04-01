@@ -5,12 +5,12 @@ using UnityEngine;
 public abstract class AbstractBehavior : MonoBehaviour {
 
     public Buttons[] inputButtons;
-
     protected InputState inputState;
     protected Rigidbody2D body2d;
     protected CollisionState collisionState;
     protected PhysicsManager pm;
     protected GameManager gm;
+    protected FunctionLib fl;
 
     protected virtual void Awake()
     {
@@ -19,6 +19,7 @@ public abstract class AbstractBehavior : MonoBehaviour {
 		collisionState = GetComponent<CollisionState>();
         pm = GetComponent<PhysicsManager>();
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
+        fl = new FunctionLib();
 	}
 
     protected float GetAbsX()
@@ -30,8 +31,4 @@ public abstract class AbstractBehavior : MonoBehaviour {
 	{
 		return Mathf.Abs(body2d.velocity.y);
 	}
-
-    protected float Sigmoid(float x, float maxval, float shift){
-        return maxval * (1.0f / (1.0f + Mathf.Exp(-(x + shift))));
-    }
 }

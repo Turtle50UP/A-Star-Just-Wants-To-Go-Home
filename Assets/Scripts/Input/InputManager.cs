@@ -10,7 +10,11 @@ public enum Buttons{
     A,
     B,
     X,
-    Y
+    Y,
+    L,
+    R,
+    Select,
+    Start
 }
 
 public enum Cond
@@ -42,6 +46,8 @@ public class InputAxisState{
                     return axisVal > offValue;
                 case Cond.Less:
                     return axisVal < offValue;
+                case Cond.Equals:
+                    return axisVal == offValue;
             }
             return false;
         }

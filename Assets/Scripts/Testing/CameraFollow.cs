@@ -2,13 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour {
-
-    public InputManager im;
-    public PhysicsManager pm;
-	public GameObject player;
-
-    public float epsilon = 0.000001f;
+public class CameraFollow : AbstractBehavior {
 
 	// Use this for initialization
 	void Start () {
