@@ -14,64 +14,86 @@ using System.Collections.Generic;
  * Contains a public array of prefabs and a private array of lists
  * of gameobjects containing all instances of the spawned object.
  */
-public class Spawner : MonoBehaviour {
-	public GameObject[] prefabs;
-    private List<GameObject>[] spawnedList;
+
+public class ObjectTracker{
+    public float x;
+    public float y;
+    public string groupName;
+    public string prefabName;
+    public bool isOn;
+
+    public ObjectTracker(float x, float y, string gn, string pn){
+        this.x = x;
+        this.y = y;
+        this.groupName = gn;
+        this.prefabName = pn;
+        this.isOn = false;
+    }
+
+    public ObjectTracker(string[] stringData){
+        if(stringData.Length == 4){
+            this.x = float.Parse(stringData[0]);
+            this.y = float.Parse(stringData[1]);
+            this.groupName = stringData[2];
+            this.prefabName = stringData[3];
+            Debug.Log("Correct Format");
+        }
+        else{
+            this.x = 0f;
+            this.y = 0f;
+            this.groupName = "null";
+            this.prefabName = "null";
+            Debug.Log("ERROR: Incorrect data amount");
+        }
+        this.isOn = false;
+    }
+}
+
+public class Spawner : AbstractSpawner {
+    public bool is2D = true;
+    public TextAsset coordinates;
+    private string coordString;
+    private List<ObjectTracker> objects;
+
+    private void ParseCoordinates(){
+        string[] coordStrings = coordString.Split('\n');
+        foreach(string coordData in coordStrings){
+            string[] cData = coordData.Split(',');
+            objects.Add(new ObjectTracker(cData));
+        }
+    }
 
     /* Start: Initializes structures used in later spawn/despawn methods
      */
-    private void Start()
+    /// <summary>
+    /// Update is called every frame, if the MonoBehaviour is enabled.
+    /// </summary>
+
+    protected override void Start(){
+        base.Start();
+        objects = new List<ObjectTracker>();
+        if(coordinates != null){
+            coordString = coordinates.ToString();
+        }
+        ParseCoordinates();
+        Spawn();
+    }
+
+    public void Spawn(){
+        foreach(ObjectTracker obj in objects){
+            Vector3 position = new Vector3(
+                obj.x,obj.y,this.transform.position.z);
+            Spawn(obj.prefabName,position);
+        }
+    }
+
+    void Update()
     {
-        spawnedList = new List<GameObject>[prefabs.Length];
-        for (int i = 0; i < spawnedList.Length; i++){
-            spawnedList[i] = new List<GameObject>();
+        if(Input.GetKeyDown(KeyCode.T)){
+            Spawn();
+        }
+        if(Input.GetKeyDown(KeyCode.U)){
+            Despawn();
         }
     }
-
-    /* SpawnAtLoc: Spawns an object at the requested location
-     */
-    public void SpawnAtLoc(int i, Vector3 position){
-        GameObject go = GameObjUtil.Instantiate(prefabs[i], position);
-        spawnedList[i].Add(go);
-	}
-
-    /* Spawn: Spawns at the spawner location
-     */
-    public void Spawn(int i){
-        SpawnAtLoc(i,this.transform.position);
-    }
-
-    /* SpawnN: Spawns n at the spawner location
-     */
-	public void SpawnN(int i, int n)
-	{
-		for (int j = 0; j < n; j++)
-		{
-			Spawn(i);
-		}
-	}
-
-    /* SpawnNAtLoc: Spawns n at the requested location
-     */
-    public void SpawnNAtLoc(int i, int n, Vector3 position){
-        for (int j = 0; j < n; j++){
-            SpawnAtLoc(i,position);
-        }
-    }
-
-    /* Despawn: Despawns all of a particular prefab
-     */
-	public void Despawn(int i){
-        foreach(GameObject go in spawnedList[i]){
-            GameObjUtil.Destroy(go);
-        }
-	}
-
-    /* DespawnAll: Despawns all prefabs controlled by this spawner.
-     */
-	public void DespawnAll(){
-        for (int i = 0; i < spawnedList.Length; i++){
-            Despawn(i);
-        }
-	}
 }

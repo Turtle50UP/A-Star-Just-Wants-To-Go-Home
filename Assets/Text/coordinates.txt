@@ -1,0 +1,2 @@
+1,1,orion,tempstar
+-1,-1,orion,tempstar

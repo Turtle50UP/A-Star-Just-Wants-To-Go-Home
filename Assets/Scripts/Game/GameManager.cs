@@ -8,6 +8,10 @@ public class GameManager : MonoBehaviour {
     public PhysicsManager pm;
 	public GameObject player;
 
+	public float teleRadius;
+	public float viewRadius;
+	public float skyRadius;
+
     public float epsilon = 0.000001f;
 
 	// Use this for initialization
