@@ -54,6 +54,7 @@ public class CollisionState : MonoBehaviour {
             }
 
             //Special Tag Collision check
+            
             if (string.Compare(tag, "untagged") != 0)
             {
                 int temp = 1;
@@ -64,6 +65,7 @@ public class CollisionState : MonoBehaviour {
                 isColliding = temp == 0;
             }
             if(isColliding){
+                Debug.Log("IS COLLIDING");
                 if (timeColliding < 0f){
                     timeCollided = Time.time;
                 }

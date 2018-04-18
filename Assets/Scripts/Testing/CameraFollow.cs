@@ -51,16 +51,9 @@ public class CameraFollow : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if(gm.startingMenu){
-			if(isPlayer1){
-				this.transform.position = new Vector3(gm.p1startloc.x,
-													gm.p1startloc.y,
-													this.transform.position.z);
-			}
-			else{
-				this.transform.position = new Vector3(gm.p2startloc.x,
-													gm.p2startloc.y,
-													this.transform.position.z);
-			}
+			this.transform.position = new Vector3(gm.p2startloc.x,
+												gm.p2startloc.y,
+												this.transform.position.z);
 		}
 		else{
 			if(isPlayer1){

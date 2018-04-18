@@ -27,6 +27,15 @@ public class GameManager : MonoBehaviour {
 
     public float epsilon = 0.000001f;
 
+	public void SetMinimapView(int playernum, bool toSet){
+		if(playernum == 1){
+			isViewingMinimapP1 = toSet;
+		}
+		else if(playernum == 2){
+			isViewingMinimapP2 = toSet;
+		}
+	}
+
 	// Use this for initialization
 	void Start () {
 		
@@ -46,8 +55,8 @@ public class GameManager : MonoBehaviour {
 			Gizmos.DrawWireSphere(viewloc, skyRadius);
 			Gizmos.DrawWireSphere(Vector2.zero, viewRadius);
 			Gizmos.DrawWireSphere(patternloc, teleRadius);
-			Gizmos.DrawWireCube(p1startloc, startingDim);
 			Gizmos.DrawWireCube(p2startloc, startingDim);
+			//Gizmos.DrawWireCube(Vector2.zero, new Vector2(1.0f,1.0f));
 		}
 	}
 }
