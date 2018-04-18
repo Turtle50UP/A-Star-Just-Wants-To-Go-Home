@@ -10,6 +10,7 @@ public class PlayerMove : AbstractBehavior {
     public /*static*/ /*const*/ float boostMultiplier = 2.0f;
     public float sigmoidStretch = 1f;
     public float breakAccel = 2f;
+    public float breakFactor = 2.0f;
     Vector2 movementTimes;
 
     public float heldUpperBound = 4;
@@ -43,6 +44,13 @@ public class PlayerMove : AbstractBehavior {
         float curmovementtime = (posHeld + negHeld) * axisHolding;
         return curmovementtime;
     }
+
+    float ThreeSign(float input){
+        if(input * input < epsilon){
+            return 0.0f;
+        }
+        return Mathf.Sign(input);
+    }
 	
 	// Update is called once per frame
     protected virtual void FixedUpdate () {
@@ -54,10 +62,16 @@ public class PlayerMove : AbstractBehavior {
         Vector2 accel = Vector2.zero;
         GameObject sprite = this.gameObject.transform.GetChild(0).gameObject;
 
-        if(isBreaking){
+        accel = new Vector2(UpdateMovementTime(0,1),
+                            UpdateMovementTime(2,3));
+        accel = new Vector2(fl.TwoWaySigmoid(accel.x,sigmoidStretch),
+                            fl.TwoWaySigmoid(accel.y,sigmoidStretch));
+        float amag = accel.magnitude;
+
+        if(amag < epsilon){
             Debug.Log("breaking");
             Vector2 unit = velocity.normalized;
-            unit *= -breakAccel;
+            unit *= -breakAccel * (isBreaking ? breakFactor : 1.0f);
             float velmag = velocity.magnitude;
             if(velmag < breakAccel){
                 body2d.velocity = Vector2.zero;
@@ -72,6 +86,7 @@ public class PlayerMove : AbstractBehavior {
                                 UpdateMovementTime(2,3));
             accel = new Vector2(fl.TwoWaySigmoid(accel.x,sigmoidStretch),
                                 fl.TwoWaySigmoid(accel.y,sigmoidStretch));
+            accel = new Vector2(ThreeSign(accel.x),ThreeSign(accel.y));
             accel *= tempMaxAccel;
             velocity += accel * Time.fixedDeltaTime;
             if(velocity.magnitude > tempMaxSpeed){
