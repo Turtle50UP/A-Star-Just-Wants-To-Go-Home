@@ -14,6 +14,7 @@ public class PlayerMove : AbstractBehavior {
     Vector2 movementTimes;
 
     public float heldUpperBound = 4;
+    public int playernum;
 
     float epsilon;
 
@@ -55,6 +56,7 @@ public class PlayerMove : AbstractBehavior {
 	// Update is called once per frame
     protected virtual void FixedUpdate () {
 		bool isBoosting = inputState.GetButtonValue(inputButtons[4]);
+        gm.SetMinimapView(playernum,isBoosting);
         bool isBreaking = inputState.GetButtonValue(inputButtons[5]);
         Vector2 velocity = body2d.velocity;
         float tempMaxSpeed = maxspeed * (isBoosting ? boostMultiplier : 1);
@@ -103,6 +105,16 @@ public class PlayerMove : AbstractBehavior {
                 sprite.transform.eulerAngles.x,
                 sprite.transform.eulerAngles.y,
                 angle);
+        }
+        if(!gm.startingMenu){
+            float mag = this.transform.position.magnitude;
+            if(mag > gm.viewRadius){
+                Vector2 temp = new Vector2(this.transform.position.x,
+                                            this.transform.position.y);
+                temp.Normalize();
+                temp *= gm.viewRadius;
+                this.transform.position = temp;
+            }
         }
     }
 }
