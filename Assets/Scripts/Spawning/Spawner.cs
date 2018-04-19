@@ -69,8 +69,8 @@ public class Spawner : AbstractSpawner {
     /// Update is called every frame, if the MonoBehaviour is enabled.
     /// </summary>
 
-    protected override void Start(){
-        base.Start();
+    protected override void Awake(){
+        base.Awake();
         objects = new List<ObjectTracker>();
         if(coordinates != null){
             coordString = coordinates.ToString();

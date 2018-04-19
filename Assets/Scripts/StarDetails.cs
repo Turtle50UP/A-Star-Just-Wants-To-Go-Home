@@ -5,7 +5,23 @@ using UnityEngine;
 public class StarDetails : MonoBehaviour {
 
 	public string groupName;
-	public string prefabName;
+	public bool alreadySelected = false;
+	public int index;
+	public GraphVertex thisgv;
+	public ConstellationManager cm;
+
+
+	public void SetIndex(int index){
+		this.index = index;
+	}
+
+	public void SetGV(GraphVertex gv){
+		thisgv = gv;
+	}
+
+	public void SetCM(ConstellationManager constellationManager){
+		cm = constellationManager;
+	}
 
 	// Use this for initialization
 	void Start () {

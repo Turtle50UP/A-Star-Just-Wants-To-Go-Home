@@ -65,7 +65,7 @@ public class CollisionState : MonoBehaviour {
                 isColliding = temp == 0;
             }
             if(isColliding){
-                Debug.Log("IS COLLIDING");
+                //Debug.Log("IS COLLIDING");
                 if (timeColliding < 0f){
                     timeCollided = Time.time;
                 }

@@ -22,29 +22,33 @@ public class AbstractSpawner : MonoBehaviour {
 	public PrefabContainer[] prefabs;
 
 	// Use this for initialization
-	protected virtual void Start () {
-		spawnedList = new List<GameObjectContainer>();
+	protected virtual void Awake () {
+		if(spawnedList == null){
+			spawnedList = new List<GameObjectContainer>();
+		}
+
 	}
 
-	public void Spawn(string name, Vector3 position){
+	public GameObject Spawn(string name, Vector3 position){
 		GameObject toSpawn = null;
 		foreach(PrefabContainer prefab in prefabs){
 			if(string.Compare(name, prefab.name) == 0){
 				toSpawn = prefab.prefab;
-				Debug.Log("Spawned!");
+				//Debug.Log("Spawned!");
 			}
 		}
 		if(toSpawn != null){
 			GameObject go = GameObjUtil.Instantiate(toSpawn, position);
 			GameObjectContainer goc = new GameObjectContainer(name,go);
         	spawnedList.Add(goc);
-			return;
+			return go;
 		}   
-		Debug.Log("Not Spawned!");
+		//Debug.Log("Not Spawned!");
+		return null;
 	}
 
-	public void Spawn(string name){
-        Spawn(name, this.transform.position);
+	public GameObject Spawn(string name){
+        return Spawn(name, this.transform.position);
     }
 
 	public void Despawn(){

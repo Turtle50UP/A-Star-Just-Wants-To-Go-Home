@@ -8,6 +8,7 @@ public class CameraFollow : MonoBehaviour {
 	public float maxrad = 4.0f;
 	public GameObject player;
 	public GameManager gm;
+	public CameraHintPositionManager cameraHintPositionManager;
 	bool isPlayer1;
 	void Start () {
 		string thisobj = this.name;
@@ -56,10 +57,34 @@ public class CameraFollow : MonoBehaviour {
 												this.transform.position.z);
 		}
 		else{
+			if(player.GetComponent<PlayerMove>().viewingMinimap){
+				this.transform.position = new Vector3(gm.viewloc.x,
+													gm.viewloc.y,
+													this.transform.position.z);
+			}
+			else if(player.GetComponent<PlayerViewHints>().viewingHints){
+				Debug.Log("Player is Viewing Hints");
+				int camerapos = player.GetComponent<PlayerViewHints>().numViewing;
+				Vector3 newpos = cameraHintPositionManager.cameraViews[camerapos].transform.position;
+				this.transform.position = new Vector3(newpos.x,
+												newpos.y,
+												this.transform.position.z);
+			}
+			else{
+				InPlayCamera();
+			}
+			/*
 			if(isPlayer1){
 				if(gm.isViewingMinimapP1){
 					this.transform.position = new Vector3(gm.viewloc.x,
 													gm.viewloc.y,
+													this.transform.position.z);
+				}
+				else if(player.GetComponent<PlayerViewHints>().viewingHints){
+					int camerapos = player.GetComponent<PlayerViewHints>().numViewing;
+					Vector3 newpos = cameraHintPositionManager.cameraViews[camerapos].transform.position;
+					this.transform.position = new Vector3(newpos.x,
+													newpos.y,
 													this.transform.position.z);
 				}
 				else{
@@ -72,10 +97,17 @@ public class CameraFollow : MonoBehaviour {
 													gm.viewloc.y,
 													this.transform.position.z);
 				}
+				else if(player.GetComponent<PlayerViewHints>().viewingHints){
+					int camerapos = player.GetComponent<PlayerViewHints>().numViewing;
+					Vector3 newpos = cameraHintPositionManager.cameraViews[camerapos].transform.position;
+					this.transform.position = new Vector3(newpos.x,
+													newpos.y,
+													this.transform.position.z);
+				}
 				else{
 					InPlayCamera();
 				}
-			}
+			}*/
 		}
 	}
 }
