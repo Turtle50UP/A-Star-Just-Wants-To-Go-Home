@@ -15,6 +15,7 @@ public class PlayerMove : AbstractBehavior {
 
     public float heldUpperBound = 4;
     public int playernum;
+    public bool viewingMinimap;
 
     float epsilon;
 
@@ -57,6 +58,7 @@ public class PlayerMove : AbstractBehavior {
     protected virtual void FixedUpdate () {
 		bool isBoosting = inputState.GetButtonValue(inputButtons[4]);
         gm.SetMinimapView(playernum,isBoosting);
+        viewingMinimap = isBoosting;
         bool isBreaking = inputState.GetButtonValue(inputButtons[5]);
         Vector2 velocity = body2d.velocity;
         float tempMaxSpeed = maxspeed * (isBoosting ? boostMultiplier : 1);
@@ -71,7 +73,7 @@ public class PlayerMove : AbstractBehavior {
         float amag = accel.magnitude;
 
         if(amag < epsilon){
-            Debug.Log("breaking");
+            //Debug.Log("breaking");
             Vector2 unit = velocity.normalized;
             unit *= -breakAccel * (isBreaking ? breakFactor : 1.0f);
             float velmag = velocity.magnitude;
@@ -113,7 +115,7 @@ public class PlayerMove : AbstractBehavior {
                                             this.transform.position.y);
                 temp.Normalize();
                 temp *= gm.viewRadius;
-                this.transform.position = temp;
+                this.transform.position = new Vector3(temp.x,temp.y,this.transform.position.z);
             }
         }
     }

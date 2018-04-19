@@ -27,6 +27,24 @@ public abstract class AbstractBehavior : MonoBehaviour {
         return Mathf.Abs(body2d.velocity.x);
     }
 
+    protected GameObject GetClosestCollidingMember(Collider2D[] collmems){
+		float[] dists = new float[collmems.Length];
+		for(int i = 0; i < collmems.Length; i++){
+			Vector2 collloc = collmems[i].gameObject.transform.position;
+			collloc -= (Vector2)this.transform.position;
+			dists[i] = collloc.magnitude;
+		}
+		int mindex = 0;
+		float min = float.PositiveInfinity;
+		for(int i = 0; i < dists.Length; i++){
+			if(min > dists[i]){
+				min = dists[i];
+				mindex = i;
+			}
+		}
+		return collmems[mindex].gameObject;
+	}
+
 	protected float GetAbsY()
 	{
 		return Mathf.Abs(body2d.velocity.y);
