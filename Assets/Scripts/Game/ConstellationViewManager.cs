@@ -14,6 +14,7 @@ public class ConstellationViewManager : MonoBehaviour {
 	public bool[] whichToTurnOn;
 	string focus1;
 	string focus2;
+	bool simpleMode = true;
 
 	public void SetupScreen(string difficultyp1,string difficultyp2,string constname1, string constname2){//PlayerLevelSelect p1Selected, PlayerLevelSelect p2Selected){
 		//string difficultyp1 = p1Selected.selectObject.GetComponent<ConstellationManager>().constellation.difficulty;
@@ -25,6 +26,23 @@ public class ConstellationViewManager : MonoBehaviour {
 		for(int i = 0; i < whichToTurnOn.Length; i++){
 			whichToTurnOn[i] = whichAlwaysOn[i];
 		}
+		int randomNumber1;
+		for(int i = 0; i < 2; i++){
+			randomNumber1 = random.Next(0,whichAlwaysOn.Length);
+			while(whichToTurnOn[randomNumber1] || (constellationManagers[randomNumber1].name == focus1)||(constellationManagers[randomNumber1].name == focus2)){
+				randomNumber1 = random.Next(0,whichAlwaysOn.Length);
+			}
+			whichToTurnOn[randomNumber1] = true;
+		}
+		if(simpleMode){
+			for(int i = 0; i < whichToTurnOn.Length; i++){
+			if(whichToTurnOn[i]){
+				constellationManagers[i].DrawAllEdges();
+			}
+		}
+			return;
+		}
+
 		if(difficultyp1 == "Insane" && difficultyp2 == "Insane"){
 			for(int i = 0; i < whichToTurnOn.Length; i++){
 			if(whichToTurnOn[i]){
@@ -33,7 +51,7 @@ public class ConstellationViewManager : MonoBehaviour {
 		}
 			return;
 		}
-		int randomNumber1 = random.Next(0,whichAlwaysOn.Length);
+		randomNumber1 = random.Next(0,whichAlwaysOn.Length);
 		while(whichToTurnOn[randomNumber1] || (constellationManagers[randomNumber1].name == focus1)||(constellationManagers[randomNumber1].name == focus2)){
 			randomNumber1 = random.Next(0,whichAlwaysOn.Length);
 		}

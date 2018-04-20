@@ -18,6 +18,7 @@ public class PlayerLevelSelect : AbstractBehavior {
 	}
 	public Image ybutton;
 	public Text difficulty;
+	public Text constName;
 
 	public PlayerImageHandler thisplayerImageHandler;
 	public PlayerImageHandler otherplayerImageHandler;
@@ -43,6 +44,17 @@ public class PlayerLevelSelect : AbstractBehavior {
 		}
 	}
 
+	public Vector2 SelectedConstellationLoc{
+		get{
+			foreach(ConstellationManager cm in constellationViewManager.constellationManagers){
+				if(cm.name == SelectedConstellationName){
+					return cm.constellation.constellationImage.transform.position;
+				}
+			}
+			return Vector2.zero;
+		}
+	}
+
 	// Use this for initialization
 	void Start () {
 		SpriteRenderer sr = selectObject.transform.GetChild(0).GetComponent<SpriteRenderer>();
@@ -60,6 +72,7 @@ public class PlayerLevelSelect : AbstractBehavior {
 		if(!gm.startingMenu){
 			ybutton.canvasRenderer.SetAlpha(0);
 			difficulty.canvasRenderer.SetAlpha(0);
+			constName.canvasRenderer.SetAlpha(0);
 		}
 		if(selectedConstellation != null && inputState.GetButtonValue(inputButtons[1])){
 			startGameSelected = true;
@@ -90,7 +103,9 @@ public class PlayerLevelSelect : AbstractBehavior {
 						otherplayerImageHandler.SetCorrectImage(SelectedConstellationName);
 						ybutton.canvasRenderer.SetAlpha(1);
 						difficulty.canvasRenderer.SetAlpha(1);
+						constName.canvasRenderer.SetAlpha(1);
 						difficulty.text = CorrespondingCVMDifficulty;
+						constName.text = SelectedConstellationName;
 					}
 					else{
 						selectedConstellation = null;
@@ -104,6 +119,7 @@ public class PlayerLevelSelect : AbstractBehavior {
 						otherplayerImageHandler.SetCorrectImage("");
 						ybutton.canvasRenderer.SetAlpha(0);
 						difficulty.canvasRenderer.SetAlpha(0);
+						constName.canvasRenderer.SetAlpha(0);
 					}
 				}
 			}

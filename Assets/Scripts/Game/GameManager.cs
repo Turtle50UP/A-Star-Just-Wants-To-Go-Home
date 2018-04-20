@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
+	public bool inTutorial;
+	public TutorialManager tutorialManager;
+	//public bool inStart;
 	public Image p1Title;
 	public Image p2Title;
 	public AudioArrayHandler audioArray;
@@ -27,6 +30,12 @@ public class GameManager : MonoBehaviour {
 	public Vector2 viewloc;
 	public Vector2 p2viewloc;
 	public Vector2 patternloc;
+	public Vector2 tutorialLoc;
+	public float tutorialrad;
+	public Vector2 tutorialMoveLoc;
+	public float tutorialMoverad;
+	public Vector2 tutorialHintLoc;
+	public float tutorialHintrad;
 	public float offsetForSplitscreen;
 	public Vector2 startingDim;
 	public Vector2 p1startloc;
@@ -70,7 +79,20 @@ public class GameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-		if(startingMenu){ //Start menu
+		if(inTutorial){
+			if(tutorialManager.hasFinishedTutorial){
+				tutorialManager.hasFinishedTutorial = false;
+				inTutorial = false;
+				startingMenu = true;
+				player1.transform.position = new Vector3(p2startloc.x,
+				p2startloc.y,
+				player1.transform.position.z);
+				player2.transform.position = new Vector3(p2startloc.x,
+				p2startloc.y,
+				player2.transform.position.z);
+			}
+		}
+		else if(startingMenu){ //Start menu
 			p1Timer.canvasRenderer.SetAlpha(0);
 			p2Timer.canvasRenderer.SetAlpha(0);
 			p1Title.canvasRenderer.SetAlpha(1);
@@ -93,8 +115,8 @@ public class GameManager : MonoBehaviour {
 					player2.transform.position.z
 				);
 				constellationViewManager.ResetGame();
-				Debug.Log(p1ls.selectObject);
-				Debug.Log(p2ls.selectObject);
+				//Debug.Log(p1ls.selectObject);
+				//Debug.Log(p2ls.selectObject);
 				constellationViewManager.SetupScreen(p1ls.CorrespondingCVMDifficulty,p2ls.CorrespondingCVMDifficulty,p1ls.SelectedConstellationName,p2ls.SelectedConstellationName);
 				curtime = Time.fixedTime;
 				p1Timer.canvasRenderer.SetAlpha(1);
@@ -105,27 +127,27 @@ public class GameManager : MonoBehaviour {
 		}
 		else if(inPlay){//Inplay
 			remainingTime = Time.fixedTime - curtime;
-			Debug.Log(remainingTime);
+			//Debug.Log(remainingTime);
 			remainingTime = SecondsTimeLimit - remainingTime;
-			Debug.Log(remainingTime);
+			//Debug.Log(remainingTime);
 			bool finishedYet = constellationViewManager.FinishedDrawing();
-			Debug.Log(finishedYet);
+			//Debug.Log(finishedYet);
 			if(Input.GetKeyDown(KeyCode.T)){
-				Debug.Log("Got it");
+				//Debug.Log("Got it");
 				if(Input.GetKeyDown(KeyCode.Y)){
-					Debug.Log("Got it");
+					//Debug.Log("Got it");
 					remainingTime = -1f;
 				}
 			}
 			if(finishedYet){
-				Debug.Log("WTF");
+				//Debug.Log("WTF");
 				finalState = true;
 				hasFailed = false;
 				inPlay = false;
 			}
 			//Check if constellations finished yet
 			if(remainingTime < 0){ //Fail state
-			Debug.Log("HTH");
+			//Debug.Log("HTH");
 				finalState = true;
 				hasFailed = true;
 				inPlay = false;
@@ -157,14 +179,15 @@ public class GameManager : MonoBehaviour {
 				audioArray.PlayAudio(win);
 				//YOU WIN
 			}
-			player1.transform.position = new Vector3(p2startloc.x,
-			p2startloc.y,
+			player1.transform.position = new Vector3(tutorialMoveLoc.x,
+			tutorialMoveLoc.y,
 			player1.transform.position.z);
-			player2.transform.position = new Vector3(p2startloc.x,
-			p2startloc.y,
+			player2.transform.position = new Vector3(tutorialMoveLoc.x,
+			tutorialMoveLoc.y,
 			player2.transform.position.z);
 			finalState = false;
-			startingMenu = true;
+			startingMenu = false;
+			inTutorial = true;
 			tutorial.GetComponent<ConstellationManager>().DespawnConstellation();
 		}
 	}
@@ -179,7 +202,10 @@ public class GameManager : MonoBehaviour {
 			Gizmos.DrawWireSphere(Vector2.zero, viewRadius);
 			Gizmos.DrawWireSphere(patternloc, teleRadius);
 			Gizmos.DrawWireCube(p2startloc, startingDim);
-			//Gizmos.DrawWireCube(Vector2.zero, new Vector2(1.0f,1.0f));
+			Gizmos.DrawWireSphere(tutorialLoc,tutorialrad);
+			Gizmos.DrawWireSphere(tutorialLoc,tutorialrad);
+			Gizmos.DrawWireSphere(tutorialMoveLoc,tutorialMoverad);
+			Gizmos.DrawWireSphere(tutorialHintLoc,tutorialHintrad);
 		}
 	}
 }

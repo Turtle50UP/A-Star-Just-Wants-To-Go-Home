@@ -110,11 +110,19 @@ public class PlayerMove : AbstractBehavior {
         }
         if(!gm.startingMenu){
             float mag = this.transform.position.magnitude;
-            if(mag > gm.viewRadius){
-                Vector2 temp = new Vector2(this.transform.position.x,
-                                            this.transform.position.y);
+            Vector2 temp = new Vector2(this.transform.position.x,
+                                        this.transform.position.y);
+            if(gm.inTutorial){
+                temp -= gm.tutorialLoc;
+                if(mag > gm.tutorialrad){
                 temp.Normalize();
-                temp *= gm.viewRadius;
+                temp *= gm.viewRadius - 1f;
+                this.transform.position = new Vector3(temp.x,temp.y,this.transform.position.z);
+                }
+            }
+            if(mag > gm.viewRadius){
+                temp.Normalize();
+                temp *= gm.viewRadius - 1f;
                 this.transform.position = new Vector3(temp.x,temp.y,this.transform.position.z);
             }
         }

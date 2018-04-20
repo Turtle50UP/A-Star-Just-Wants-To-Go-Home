@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class PlayerExpressionManager : MonoBehaviour {
 
+	public Image peeking;
 	public Image neutral;
 	public Image neutral2;
 	public Image happy;
@@ -21,6 +22,10 @@ public class PlayerExpressionManager : MonoBehaviour {
 	bool inSpecial = false;
 	float specialDuration;
 	System.Random random;
+	public GameManager gameManager;
+	float alternateDuration;
+	float alternateTime;
+	bool isAlternate;
 
 	// Use this for initialization
 	void Awake () {
@@ -32,6 +37,7 @@ public class PlayerExpressionManager : MonoBehaviour {
 		depressed.canvasRenderer.SetAlpha(0);
 		capitalist.canvasRenderer.SetAlpha(0);
 		communist.canvasRenderer.SetAlpha(0);
+		peeking.canvasRenderer.SetAlpha(0);
 		random = new System.Random();
 		timeToSwitchNeutral = (float)random.Next((int)sampleNeutral.x,(int)sampleNeutral.y);
 		actionStartTime = Time.fixedTime;
@@ -49,6 +55,7 @@ public class PlayerExpressionManager : MonoBehaviour {
 		depressed.canvasRenderer.SetAlpha(0);
 		capitalist.canvasRenderer.SetAlpha(0);
 		communist.canvasRenderer.SetAlpha(0);
+		peeking.canvasRenderer.SetAlpha(0);
 	}
 
 	public void Sadness(){
@@ -63,6 +70,7 @@ public class PlayerExpressionManager : MonoBehaviour {
 		depressed.canvasRenderer.SetAlpha(0);
 		capitalist.canvasRenderer.SetAlpha(0);
 		communist.canvasRenderer.SetAlpha(0);
+		peeking.canvasRenderer.SetAlpha(0);
 	}
 
 	public void Exuberant(){
@@ -77,6 +85,7 @@ public class PlayerExpressionManager : MonoBehaviour {
 		depressed.canvasRenderer.SetAlpha(0);
 		capitalist.canvasRenderer.SetAlpha(0);
 		communist.canvasRenderer.SetAlpha(0);
+		peeking.canvasRenderer.SetAlpha(0);
 	}
 
 	public void Gloomy(){
@@ -91,6 +100,7 @@ public class PlayerExpressionManager : MonoBehaviour {
 		depressed.canvasRenderer.SetAlpha(1);
 		capitalist.canvasRenderer.SetAlpha(0);
 		communist.canvasRenderer.SetAlpha(0);
+		peeking.canvasRenderer.SetAlpha(0);
 	}
 
 	public void FreeMarket(){
@@ -105,6 +115,7 @@ public class PlayerExpressionManager : MonoBehaviour {
 		depressed.canvasRenderer.SetAlpha(0);
 		capitalist.canvasRenderer.SetAlpha(1);
 		communist.canvasRenderer.SetAlpha(0);
+		peeking.canvasRenderer.SetAlpha(0);
 	}
 
 	public void ForThePeople(){
@@ -119,6 +130,137 @@ public class PlayerExpressionManager : MonoBehaviour {
 		depressed.canvasRenderer.SetAlpha(0);
 		capitalist.canvasRenderer.SetAlpha(0);
 		communist.canvasRenderer.SetAlpha(1);
+		peeking.canvasRenderer.SetAlpha(0);
+	}
+
+	void DoAlternate(int i){ //neutral2, happy, sad, really happy, really sad, capitalist, communist, peeking
+		if(Time.fixedTime - alternateTime > alternateDuration){
+			if(isAlternate){
+				neutral.canvasRenderer.SetAlpha(1);
+				neutral2.canvasRenderer.SetAlpha(0);
+				happy.canvasRenderer.SetAlpha(0);
+				sad.canvasRenderer.SetAlpha(0);
+				victorious.canvasRenderer.SetAlpha(0);
+				depressed.canvasRenderer.SetAlpha(0);
+				capitalist.canvasRenderer.SetAlpha(0);
+				communist.canvasRenderer.SetAlpha(0);
+				peeking.canvasRenderer.SetAlpha(0);
+				isAlternate = false;
+			}
+			else{
+				switch(i){
+					case 1:
+						neutral.canvasRenderer.SetAlpha(0);
+						neutral2.canvasRenderer.SetAlpha(1);
+						happy.canvasRenderer.SetAlpha(0);
+						sad.canvasRenderer.SetAlpha(0);
+						victorious.canvasRenderer.SetAlpha(0);
+						depressed.canvasRenderer.SetAlpha(0);
+						capitalist.canvasRenderer.SetAlpha(0);
+						communist.canvasRenderer.SetAlpha(0);
+						peeking.canvasRenderer.SetAlpha(0);
+						break;
+					case 2:
+						neutral.canvasRenderer.SetAlpha(0);
+						neutral2.canvasRenderer.SetAlpha(0);
+						happy.canvasRenderer.SetAlpha(1);
+						sad.canvasRenderer.SetAlpha(0);
+						victorious.canvasRenderer.SetAlpha(0);
+						depressed.canvasRenderer.SetAlpha(0);
+						capitalist.canvasRenderer.SetAlpha(0);
+						communist.canvasRenderer.SetAlpha(0);
+						peeking.canvasRenderer.SetAlpha(0);
+						break;
+					case 3:
+						neutral.canvasRenderer.SetAlpha(0);
+						neutral2.canvasRenderer.SetAlpha(0);
+						happy.canvasRenderer.SetAlpha(0);
+						sad.canvasRenderer.SetAlpha(1);
+						victorious.canvasRenderer.SetAlpha(0);
+						depressed.canvasRenderer.SetAlpha(0);
+						capitalist.canvasRenderer.SetAlpha(0);
+						communist.canvasRenderer.SetAlpha(0);
+						peeking.canvasRenderer.SetAlpha(0);
+						break;
+					case 4:
+						neutral.canvasRenderer.SetAlpha(0);
+						neutral2.canvasRenderer.SetAlpha(0);
+						happy.canvasRenderer.SetAlpha(0);
+						sad.canvasRenderer.SetAlpha(0);
+						victorious.canvasRenderer.SetAlpha(1);
+						depressed.canvasRenderer.SetAlpha(0);
+						capitalist.canvasRenderer.SetAlpha(0);
+						communist.canvasRenderer.SetAlpha(0);
+						peeking.canvasRenderer.SetAlpha(0);
+						break;
+					case 5:
+						neutral.canvasRenderer.SetAlpha(0);
+						neutral2.canvasRenderer.SetAlpha(0);
+						happy.canvasRenderer.SetAlpha(0);
+						sad.canvasRenderer.SetAlpha(0);
+						victorious.canvasRenderer.SetAlpha(0);
+						depressed.canvasRenderer.SetAlpha(1);
+						capitalist.canvasRenderer.SetAlpha(0);
+						communist.canvasRenderer.SetAlpha(0);
+						peeking.canvasRenderer.SetAlpha(0);
+						break;
+					case 6:
+						neutral.canvasRenderer.SetAlpha(0);
+						neutral2.canvasRenderer.SetAlpha(0);
+						happy.canvasRenderer.SetAlpha(0);
+						sad.canvasRenderer.SetAlpha(0);
+						victorious.canvasRenderer.SetAlpha(0);
+						depressed.canvasRenderer.SetAlpha(0);
+						capitalist.canvasRenderer.SetAlpha(1);
+						communist.canvasRenderer.SetAlpha(0);
+						peeking.canvasRenderer.SetAlpha(0);
+						break;
+					case 7:
+						neutral.canvasRenderer.SetAlpha(0);
+						neutral2.canvasRenderer.SetAlpha(0);
+						happy.canvasRenderer.SetAlpha(0);
+						sad.canvasRenderer.SetAlpha(0);
+						victorious.canvasRenderer.SetAlpha(0);
+						depressed.canvasRenderer.SetAlpha(0);
+						capitalist.canvasRenderer.SetAlpha(0);
+						communist.canvasRenderer.SetAlpha(1);
+						peeking.canvasRenderer.SetAlpha(0);
+						break;
+					case 8:
+						neutral.canvasRenderer.SetAlpha(0);
+						neutral2.canvasRenderer.SetAlpha(0);
+						happy.canvasRenderer.SetAlpha(0);
+						sad.canvasRenderer.SetAlpha(0);
+						victorious.canvasRenderer.SetAlpha(0);
+						depressed.canvasRenderer.SetAlpha(0);
+						capitalist.canvasRenderer.SetAlpha(0);
+						communist.canvasRenderer.SetAlpha(0);
+						peeking.canvasRenderer.SetAlpha(1);
+						break;
+					default:
+						neutral.canvasRenderer.SetAlpha(1);
+						neutral2.canvasRenderer.SetAlpha(0);
+						happy.canvasRenderer.SetAlpha(0);
+						sad.canvasRenderer.SetAlpha(0);
+						victorious.canvasRenderer.SetAlpha(0);
+						depressed.canvasRenderer.SetAlpha(0);
+						capitalist.canvasRenderer.SetAlpha(0);
+						communist.canvasRenderer.SetAlpha(0);
+						peeking.canvasRenderer.SetAlpha(0);
+						break;
+				}
+				isAlternate = true;
+			}
+			alternateTime = Time.fixedTime;
+		}
+	}
+	
+	public void SetSpeaking(int i){
+		inSpecial = true;
+		specialDuration = (float)random.Next((int)emotionDuration.x,(int)emotionDuration.y);
+		actionStartTime = Time.fixedTime;
+		alternateTime = actionStartTime;
+		DoAlternate(i);
 	}
 	
 	// Update is called once per frame
@@ -140,6 +282,7 @@ public class PlayerExpressionManager : MonoBehaviour {
 				depressed.canvasRenderer.SetAlpha(0);
 				capitalist.canvasRenderer.SetAlpha(0);
 				communist.canvasRenderer.SetAlpha(0);
+				peeking.canvasRenderer.SetAlpha(0);
 			}
 		}
 		else{
@@ -155,6 +298,7 @@ public class PlayerExpressionManager : MonoBehaviour {
 				depressed.canvasRenderer.SetAlpha(0);
 				capitalist.canvasRenderer.SetAlpha(0);
 				communist.canvasRenderer.SetAlpha(0);
+				peeking.canvasRenderer.SetAlpha(0);
 			}
 		}
 	} 
