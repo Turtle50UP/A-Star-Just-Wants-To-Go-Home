@@ -6,10 +6,12 @@ using UnityEngine.UI;
 
 public class TutorialManager : MonoBehaviour {
 	public bool hasFinishedTutorial;
+	public GameManager gameManager;
 	public bool inMoveTutorial = true;
 	public bool inPlayTutorial;
 	public bool canAccessHints;
-	public bool 
+	public bool canHoldY;
+	public bool canPressX; 
 	public Text p1Dialogue;
 	public Text p2Dialogue;
 	string text1 = "Psst, hey, over here!";
