@@ -5,6 +5,10 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
+	public Text winloss1;
+	public Text winloss2;
+	public float winlossDuration;
+	public float winlossStartTime;
 	public bool inTutorial;
 	public TutorialManager tutorialManager;
 	//public bool inStart;
@@ -54,11 +58,41 @@ public class GameManager : MonoBehaviour {
 			return timeLimit * 60f;
 		}
 	}
+	System.Random random;
+	Vector2 SampleUnitCircle{
+		get{
+			float twopi = 2.0f * Mathf.PI;
+			if(random == null){
+				random = new System.Random();
+			}
+			float angle = (float)random.NextDouble();
+			angle *= twopi;
+			float ux = Mathf.Cos(angle);
+			float uy = Mathf.Sin(angle);
+			return new Vector2(ux,uy);
+		}
+	}
+	public float spawnRange;
+	Vector2 SampleCircle{
+		get{
+			Vector2 direction = SampleUnitCircle;
+			float maxMagnitude = Mathf.Sqrt(Mathf.Abs(spawnRange));
+			if(random == null){
+				random = new System.Random();
+			}
+			float magnitude = (float)random.NextDouble();
+			magnitude *= maxMagnitude;
+			magnitude *= magnitude;
+			return direction * magnitude;
+		}
+	}
 	float curtime;
 	float remainingTime;
 	bool hasFailed = false;
 	public string p1SelectedConstellation;
 	public string p2SelectedConstellation;
+	PlayerLevelSelect p1ls;
+	PlayerLevelSelect p2ls;
 
     public float epsilon = 0.000001f;
 	public ConstellationViewManager constellationViewManager;
@@ -74,12 +108,18 @@ public class GameManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		p1ls = player1.GetComponent<PlayerLevelSelect>();
+		p2ls = player2.GetComponent<PlayerLevelSelect>();
+		winloss1.canvasRenderer.SetAlpha(0);
+		winloss2.canvasRenderer.SetAlpha(0);
 		
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate () {
 		if(inTutorial){
+			startingMenu = true;
+			inTutorial = false;
 			if(tutorialManager.hasFinishedTutorial){
 				tutorialManager.hasFinishedTutorial = false;
 				inTutorial = false;
@@ -97,21 +137,24 @@ public class GameManager : MonoBehaviour {
 			p2Timer.canvasRenderer.SetAlpha(0);
 			p1Title.canvasRenderer.SetAlpha(1);
 			p2Title.canvasRenderer.SetAlpha(1);
-			PlayerLevelSelect p1ls = player1.GetComponent<PlayerLevelSelect>();
-			PlayerLevelSelect p2ls = player2.GetComponent<PlayerLevelSelect>();
 			p1SelectedConstellation = player1.GetComponent<PlayerLevelSelect>().SelectedConstellationName;
 			p2SelectedConstellation = player2.GetComponent<PlayerLevelSelect>().SelectedConstellationName;
 			if(p1ls.startGameSelected && p2ls.startGameSelected){ //Switching to game
 				startingMenu = false;
 				inPlay = true;
+				//These are player starting locations in the game
+				p1playloc = p1ls.SelectedConstellationLoc;
+				p2playloc = p2ls.SelectedConstellationLoc;
+				Vector2 sample = SampleCircle;
 				player1.transform.position = new Vector3(
-					p1playloc.x,
-					p1playloc.y,
+					p1playloc.x + sample.x,
+					p1playloc.y + sample.y,
 					player1.transform.position.z
 				);
+				sample = SampleCircle;
 				player2.transform.position = new Vector3(
-					p2playloc.x,
-					p2playloc.y,
+					p2playloc.x + sample.x,
+					p2playloc.y + sample.y,
 					player2.transform.position.z
 				);
 				constellationViewManager.ResetGame();
@@ -132,9 +175,9 @@ public class GameManager : MonoBehaviour {
 			//Debug.Log(remainingTime);
 			bool finishedYet = constellationViewManager.FinishedDrawing();
 			//Debug.Log(finishedYet);
-			if(Input.GetKeyDown(KeyCode.T)){
+			if(Input.GetKey(KeyCode.T)){
 				//Debug.Log("Got it");
-				if(Input.GetKeyDown(KeyCode.Y)){
+				if(Input.GetKey(KeyCode.Y)){
 					//Debug.Log("Got it");
 					remainingTime = -1f;
 				}
@@ -144,6 +187,9 @@ public class GameManager : MonoBehaviour {
 				finalState = true;
 				hasFailed = false;
 				inPlay = false;
+				winlossStartTime = Time.fixedTime;
+				winloss1.canvasRenderer.SetAlpha(1);
+				winloss2.canvasRenderer.SetAlpha(1);
 			}
 			//Check if constellations finished yet
 			if(remainingTime < 0){ //Fail state
@@ -151,6 +197,9 @@ public class GameManager : MonoBehaviour {
 				finalState = true;
 				hasFailed = true;
 				inPlay = false;
+				winlossStartTime = Time.fixedTime;
+				winloss1.canvasRenderer.SetAlpha(1);
+				winloss2.canvasRenderer.SetAlpha(1);
 			}
 			float minutes = remainingTime / 60f;
 			remainingTime = minutes - (float)((int)minutes);
@@ -159,36 +208,55 @@ public class GameManager : MonoBehaviour {
 			remainingTime = seconds - (float)((int)seconds);
 			int sec = (int) (seconds - remainingTime);
 			int miliseconds = (int) (remainingTime * 1000);
-			p1Timer.text = min.ToString() + ":" + sec.ToString() + ":" + miliseconds.ToString();
-			p2Timer.text = min.ToString() + ":" + sec.ToString() + ":" + miliseconds.ToString();
+			string secstring = (sec.ToString().Length > 1 ? "" : "0" ) + sec.ToString();
+			p1Timer.text = "0" + min.ToString() + ":" + secstring + ":" + miliseconds.ToString();
+			p2Timer.text = "0" + min.ToString() + ":" + secstring + ":" + miliseconds.ToString();
 
 		}
 		else if(finalState){
-			p1Timer.canvasRenderer.SetAlpha(0);
-			p2Timer.canvasRenderer.SetAlpha(0);
-			if(hasFailed){
-				p1pem.Gloomy();
-				p2pem.Gloomy();
-				audioArray.PlayAudio(lose);
-				//YOU LOSE
+			if(Time.fixedTime - winlossStartTime < winlossDuration){
+				p1Timer.canvasRenderer.SetAlpha(0);
+				p2Timer.canvasRenderer.SetAlpha(0);
+				if(hasFailed){
+					p1pem.Gloomy();
+					p2pem.Gloomy();
+					audioArray.PlayAudio(lose);
+					winloss1.text = "You Lost!";
+					winloss2.text = "You Lost!";
+					//YOU LOSE
+				}
+				else{
+					constellationViewManager.UpdateSuccesses();
+					p1pem.Exuberant();
+					p2pem.Exuberant();
+					audioArray.PlayAudio(win);
+					winloss1.text = "You Won!";
+					winloss2.text = "You Won!";
+					//YOU WIN
+				}
 			}
 			else{
-				constellationViewManager.UpdateSuccesses();
-				p1pem.Exuberant();
-				p2pem.Exuberant();
-				audioArray.PlayAudio(win);
-				//YOU WIN
+				Debug.Log("Resetting");
+				player1.transform.position = new Vector3(tutorialMoveLoc.x,
+				tutorialMoveLoc.y,
+				player1.transform.position.z);
+				player2.transform.position = new Vector3(tutorialMoveLoc.x,
+				tutorialMoveLoc.y,
+				player2.transform.position.z);
+				finalState = false;
+				startingMenu = false;//false;
+				inTutorial = true;//true;
+				tutorialManager.hasFinishedTutorial = true;
+				tutorial.GetComponent<ConstellationManager>().DespawnConstellation();
+				p1ls.Deselect();
+				p2ls.Deselect();
+				TempTutorialManager ttm1 = player1.GetComponent<TempTutorialManager>();
+				TempTutorialManager ttm2 = player2.GetComponent<TempTutorialManager>();
+				ttm1.Restart();
+				ttm2.Restart();
+				winloss1.canvasRenderer.SetAlpha(0);
+				winloss2.canvasRenderer.SetAlpha(0);
 			}
-			player1.transform.position = new Vector3(tutorialMoveLoc.x,
-			tutorialMoveLoc.y,
-			player1.transform.position.z);
-			player2.transform.position = new Vector3(tutorialMoveLoc.x,
-			tutorialMoveLoc.y,
-			player2.transform.position.z);
-			finalState = false;
-			startingMenu = false;
-			inTutorial = true;
-			tutorial.GetComponent<ConstellationManager>().DespawnConstellation();
 		}
 	}
 

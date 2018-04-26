@@ -10,6 +10,7 @@ public class PlayerDrawLine : AbstractBehavior {
 	public SingleSpawner edgeSpawner;
 	public PlayerExpressionManager playerExpressionManager;
 	public AudioClip lineDrawn;
+	public AudioClip lineBroken;
 	public AudioArrayHandler audioArray;
 	// Use this for initialization
 	void Start () {
@@ -93,6 +94,7 @@ public class PlayerDrawLine : AbstractBehavior {
 						}
 						else{
 							playerExpressionManager.Sadness();
+							audioArray.PlayAudio(lineBroken);
 						}
 					}
 					else{

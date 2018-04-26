@@ -69,6 +69,14 @@ public class InputState : MonoBehaviour {
         }
     }
 
+    public bool GetIfAnyPressed(){
+        bool res = false;
+        foreach(Buttons button in buttonStates.Keys){
+            res = res || buttonStates[button].val;
+        }
+        return res;
+    }
+
     /*
      * Gets length of button pressed
      */
