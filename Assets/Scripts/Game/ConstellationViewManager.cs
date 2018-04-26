@@ -15,6 +15,7 @@ public class ConstellationViewManager : MonoBehaviour {
 	string focus1;
 	string focus2;
 	bool simpleMode = true;
+	int howmanytoturnon = 5;
 
 	public void SetupScreen(string difficultyp1,string difficultyp2,string constname1, string constname2){//PlayerLevelSelect p1Selected, PlayerLevelSelect p2Selected){
 		//string difficultyp1 = p1Selected.selectObject.GetComponent<ConstellationManager>().constellation.difficulty;
@@ -27,7 +28,7 @@ public class ConstellationViewManager : MonoBehaviour {
 			whichToTurnOn[i] = whichAlwaysOn[i];
 		}
 		int randomNumber1;
-		for(int i = 0; i < 2; i++){
+		for(int i = 0; i < howmanytoturnon; i++){
 			randomNumber1 = random.Next(0,whichAlwaysOn.Length);
 			while(whichToTurnOn[randomNumber1] || (constellationManagers[randomNumber1].name == focus1)||(constellationManagers[randomNumber1].name == focus2)){
 				randomNumber1 = random.Next(0,whichAlwaysOn.Length);
@@ -112,7 +113,10 @@ public class ConstellationViewManager : MonoBehaviour {
 			if(hasCompleted){
 				Debug.Log(name);
 				Debug.Log(focus1);
-				if(constellationManagers[i].name == focus1 || constellationManagers[i].name == focus2){
+				if(constellationManagers[i].name == focus1){
+					count ++;
+				}
+				if(constellationManagers[i].name == focus2){
 					count ++;
 				}
 			}
@@ -148,6 +152,15 @@ public class ConstellationViewManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+		if(Input.GetKeyUp(KeyCode.C)){
+			if(howmanytoturnon > 0){
+				howmanytoturnon --;
+			}
+		}
+		if(Input.GetKeyUp(KeyCode.O)){
+			if(howmanytoturnon < 6){
+				howmanytoturnon ++;
+			}
+		}
 	}
 }

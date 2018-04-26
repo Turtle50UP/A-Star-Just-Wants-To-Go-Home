@@ -22,6 +22,7 @@ public class PlayerLevelSelect : AbstractBehavior {
 
 	public PlayerImageHandler thisplayerImageHandler;
 	public PlayerImageHandler otherplayerImageHandler;
+	public ConstellationImageManager constellationImageManager;
 	public string SelectedConstellationName{
 		get{
 			if(selectedConstellation != null){
@@ -65,9 +66,46 @@ public class PlayerLevelSelect : AbstractBehavior {
 		otherplayerImageHandler.SetCorrectImage("");
 		ybutton.canvasRenderer.SetAlpha(0);
 		difficulty.canvasRenderer.SetAlpha(0);
+		constName.text = "";
 	}
 	
 	// Update is called once per frame
+
+	public void Deselect(){
+		selectedConstellation.GetComponent<TrophySelect>().isSelected = false;
+		selectedConstellation = null;
+		//Debug.Log("Deselected");
+		SpriteRenderer sr = selectObject.transform.GetChild(0).GetComponent<SpriteRenderer>();
+		Vector4 color = sr.color;
+		color.w = (float)minalpha/255f;
+		sr.color = color;
+		thisplayerImageHandler.SetCorrectImage("");
+		otherplayerImageHandler.SetCorrectImage("");
+		ybutton.canvasRenderer.SetAlpha(0);
+		difficulty.canvasRenderer.SetAlpha(0);
+		constName.canvasRenderer.SetAlpha(0);
+	}
+
+	void Select(GameObject temp){
+		selectedConstellation = temp;
+		selectObject.transform.position = new Vector3(
+			selectedConstellation.transform.position.x + selectObjectOffset,
+			selectedConstellation.transform.position.y + selectObjectOffset,
+			selectObject.transform.position.z
+		);
+		SpriteRenderer sr = selectObject.transform.GetChild(0).GetComponent<SpriteRenderer>();
+		Vector4 color = sr.color;
+		color.w = 1f;
+		sr.color = color;
+		temp.GetComponent<TrophySelect>().isSelected = true;
+		thisplayerImageHandler.SetCorrectImage(SelectedConstellationName);
+		otherplayerImageHandler.SetCorrectImage(SelectedConstellationName);
+		ybutton.canvasRenderer.SetAlpha(1);
+		difficulty.canvasRenderer.SetAlpha(1);
+		constName.canvasRenderer.SetAlpha(1);
+		difficulty.text = CorrespondingCVMDifficulty;
+		constName.text = SelectedConstellationName;
+	}
 	void FixedUpdate () {
 		if(!gm.startingMenu){
 			ybutton.canvasRenderer.SetAlpha(0);
@@ -87,40 +125,12 @@ public class PlayerLevelSelect : AbstractBehavior {
 			if(inputState.GetButtonValue(inputButtons[0])){
 				if(inputState.GetButtonHoldTime(inputButtons[0]) < gm.epsilon){
 					if(selectedConstellation == null || selectedConstellation != temp){
-						Debug.Log("Selected Constellation");
-						selectedConstellation = temp;
-						selectObject.transform.position = new Vector3(
-							selectedConstellation.transform.position.x + selectObjectOffset,
-							selectedConstellation.transform.position.y + selectObjectOffset,
-							selectObject.transform.position.z
-						);
-						SpriteRenderer sr = selectObject.transform.GetChild(0).GetComponent<SpriteRenderer>();
-						Vector4 color = sr.color;
-						color.w = 1f;
-						sr.color = color;
-						temp.GetComponent<TrophySelect>().isSelected = true;
-						thisplayerImageHandler.SetCorrectImage(SelectedConstellationName);
-						otherplayerImageHandler.SetCorrectImage(SelectedConstellationName);
-						ybutton.canvasRenderer.SetAlpha(1);
-						difficulty.canvasRenderer.SetAlpha(1);
-						constName.canvasRenderer.SetAlpha(1);
-						difficulty.text = CorrespondingCVMDifficulty;
-						constName.text = SelectedConstellationName;
+						Select(temp);
 					}
 					else{
-						selectedConstellation = null;
-						Debug.Log("Deselected");
-						SpriteRenderer sr = selectObject.transform.GetChild(0).GetComponent<SpriteRenderer>();
-						Vector4 color = sr.color;
-						color.w = (float)minalpha/255f;
-						sr.color = color;
-						temp.GetComponent<TrophySelect>().isSelected = false;
-						thisplayerImageHandler.SetCorrectImage("");
-						otherplayerImageHandler.SetCorrectImage("");
-						ybutton.canvasRenderer.SetAlpha(0);
-						difficulty.canvasRenderer.SetAlpha(0);
-						constName.canvasRenderer.SetAlpha(0);
+						Deselect();
 					}
+					constellationImageManager.ColorTheseConstellations();
 				}
 			}
 			else{

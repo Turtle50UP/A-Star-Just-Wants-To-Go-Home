@@ -11,6 +11,7 @@ public class AudioArrayHandler : MonoBehaviour {
 			if(!aSource.isPlaying){
 				aSource.clip = clip;
 				aSource.Play();
+				return;
 			}
 		}
 	}

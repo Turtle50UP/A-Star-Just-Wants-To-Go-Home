@@ -203,11 +203,30 @@ public class Constellation{
 public class ConstellationManager : AbstractSpawner {
 
 	public Constellation constellation;
+	public ImageSwitch imageSwitch;
+	public bool isEasterEgg = false;
 	string edgename = "edge";
 	public GameManager gameManager;
+	public PlayerExpressionManager p1express;
+	public PlayerExpressionManager p2express;
+	bool easterEggPlayed = false;
+	public EasterEggManager eem;
+	public Vector3 ConstellationPosition{
+		get{
+			return constellation.constellationImage.transform.position;
+		}
+	}
 	public bool FinishedDrawing{
 		get{
-			return constellation.CheckCompleted();
+			bool res = constellation.CheckCompleted();
+			if(imageSwitch != null){
+				if(isEasterEgg && res && !easterEggPlayed && imageSwitch.isEasterEggMode){
+					eem.PlayEasterEgg();
+					easterEggPlayed = true;
+					imageSwitch.SetTrophiesOff();
+				}
+			}
+			return res;
 		}
 	}
 	public string name;
@@ -265,6 +284,7 @@ public class ConstellationManager : AbstractSpawner {
 			}
 		}
 		bool test = FinishedDrawing;
+		easterEggPlayed = false;
 	}
 
 	//public bool DrawEdge(GraphVertex graphVertex){}
