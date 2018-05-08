@@ -11,6 +11,7 @@ public abstract class AbstractBehavior : MonoBehaviour {
     protected PhysicsManager pm;
     protected GameManager gm;
     protected FunctionLib fl;
+	protected PlayerManager plm;
 
     protected virtual void Awake()
     {
@@ -20,6 +21,7 @@ public abstract class AbstractBehavior : MonoBehaviour {
         pm = GetComponent<PhysicsManager>();
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
         fl = new FunctionLib();
+		plm = GameObject.Find("PlayerManager").GetComponent<PlayerManager>();
 	}
 
     protected float GetAbsX()

@@ -8,21 +8,23 @@ public class PlayerDrawLine : AbstractBehavior {
 	string starPickup = "starPickup";
 	public GameObject edge;
 	public SingleSpawner edgeSpawner;
-	public PlayerExpressionManager playerExpressionManager;
+	//public PlayerExpressionManager playerExpressionManager;
 	public AudioClip lineDrawn;
 	public AudioClip lineBroken;
 	public AudioArrayHandler audioArray;
 	// Use this for initialization
 	void Start () {
-		
 	}
 
 	bool DrawConstellationLine(GameObject otherStar){
-		StarDetails sd1 = selectedStar.GetComponent<StarDetails>();
-		StarDetails sd2 = otherStar.GetComponent<StarDetails>();
 		edgeSpawner.Despawn();
 		edge = null;
 		selectedStar = null;
+		if(otherStar == null){
+			return false;
+		}
+		StarDetails sd1 = selectedStar.GetComponent<StarDetails>();
+		StarDetails sd2 = otherStar.GetComponent<StarDetails>();
 		if(sd1.cm == sd2.cm){
 			bool didSecceed = sd1.cm.DrawEdge(sd1.index,sd2.index);
 			return didSecceed;
@@ -57,6 +59,10 @@ public class PlayerDrawLine : AbstractBehavior {
 			edge.transform.position = midpoint;
 		}
 	}
+
+	public void ResetEdge(){
+		DrawConstellationLine(null);
+	}
 	
 	// Update is called once per frame
 	protected virtual void FixedUpdate () {
@@ -89,11 +95,11 @@ public class PlayerDrawLine : AbstractBehavior {
 						Debug.Log("Attempt To Draw Line");
 						bool res = DrawConstellationLine(temp);
 						if(res){
-							playerExpressionManager.Glee();
+							plm.playerExpressionManager.Glee();
 							audioArray.PlayAudio(lineDrawn);
 						}
 						else{
-							playerExpressionManager.Sadness();
+							plm.playerExpressionManager.Sadness();
 							audioArray.PlayAudio(lineBroken);
 						}
 					}
