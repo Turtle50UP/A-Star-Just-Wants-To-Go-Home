@@ -59,7 +59,6 @@ public class PlayerDrawLine : AbstractBehavior {
 			edge.transform.position = midpoint;
 		}
 	}
-
 	public void ResetEdge(){
 		DrawConstellationLine(null);
 	}
