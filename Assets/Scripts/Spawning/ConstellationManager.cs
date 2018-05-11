@@ -37,10 +37,6 @@ public class GraphEdge{
     public bool IsEdge(int v1, int v2){
 		int ev1 = (int)endpoints.x;
 		int ev2 = (int)endpoints.y;
-		//Debug.Log(ev1);
-		//Debug.Log(ev2);
-		//Debug.Log(v1);
-		//Debug.Log(v2);
 		return (ev1 == v1 && ev2 == v2) || (ev1 == v2 && ev2 == v1);
 	}
 
@@ -167,12 +163,9 @@ public class Constellation{
 	public bool CheckCompleted(){
 		bool res = true;
 		foreach(GraphEdge edge in edges){
-			//Debug.Log(edge.Edge);
 			res = res && edge.Edge != null;
 		}
-		//Debug.Log(res);
 		if(res){
-			Debug.Log("Hatred");
 			if(!constellationImage.GetComponent<Renderer>().enabled){
 				constellationImage.GetComponent<Renderer>().enabled = true;
 			}
@@ -211,6 +204,14 @@ public class ConstellationManager : AbstractSpawner {
 	public PlayerExpressionManager p2express;
 	bool easterEggPlayed = false;
 	public EasterEggManager eem;
+	bool alreadyChecked;
+	public string Name
+	{
+		get
+		{
+			return this.gameObject.name.Remove(this.gameObject.name.Length - 13);
+		}
+	}
 	public Vector3 ConstellationPosition{
 		get{
 			return constellation.constellationImage.transform.position;
@@ -223,7 +224,21 @@ public class ConstellationManager : AbstractSpawner {
 				if(isEasterEgg && res && !easterEggPlayed && imageSwitch.isEasterEggMode){
 					eem.PlayEasterEgg();
 					easterEggPlayed = true;
-					imageSwitch.SetTrophiesOff();
+					//imageSwitch.SetTrophiesOff();
+				}
+			}
+			if(res){
+				if(!alreadyChecked){
+					gameManager.timeOffset += gameManager.deltaTimeOffset * gameManager.GetTimerMultiplier(constellation.difficulty);
+					gameManager.acm.UpdateConstellationCompletion(Name);
+					GameObject temp = gameManager.acm.CheckForUncompleted();
+					if(temp == null){
+						gameManager.playerManager.playerLevelSelect.Deselect();
+					}
+					else{
+						gameManager.playerManager.playerLevelSelect.Select(temp);
+					}
+					alreadyChecked = true;
 				}
 			}
 			return res;
@@ -233,14 +248,12 @@ public class ConstellationManager : AbstractSpawner {
 
 	public bool DrawEdge(int v1, int v2){
 		if(constellation.ContainsEdge(v1,v2)){
-			Debug.Log("Found Edge");
 			GameObject edge = Spawn(edgename);
 			if(!constellation.DrawEdge(edge,v1,v2)){
 				Despawn(edge);
 				return false;
 			}
 			if(FinishedDrawing){
-				Debug.Log("Finished");
 			}
 			return true;
 		}
@@ -249,14 +262,12 @@ public class ConstellationManager : AbstractSpawner {
 
 	public void RemoveEdge(int v1, int v2){
 		if(constellation.ContainsEdge(v1,v2)){
-			//Debug.Log("Found Edge");
 			GameObject edge = constellation.RemoveEdge(v1,v2);
 			Despawn(edge);
 		}
 	}
 
 	public void DrawAllEdges(){
-		//Debug.Log(constellation.NumVertices);
 		for(int i = 0; i < constellation.NumVertices; i++){
 			for(int j = i + 1; j < constellation.NumVertices; j++){
 				DrawEdge(i,j);
@@ -283,6 +294,7 @@ public class ConstellationManager : AbstractSpawner {
 				RemoveEdge(i,j);
 			}
 		}
+		alreadyChecked = false;
 		bool test = FinishedDrawing;
 		easterEggPlayed = false;
 	}

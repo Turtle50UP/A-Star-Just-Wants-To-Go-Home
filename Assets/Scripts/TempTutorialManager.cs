@@ -55,7 +55,6 @@ public class TempTutorialManager : AbstractBehavior {
 	
 	// Update is called once per frame
 	void Update () {
-		print(inputState);
 		if(inputState.GetIfAnyPressed()){
 			switch(curStep){
 				case 0:

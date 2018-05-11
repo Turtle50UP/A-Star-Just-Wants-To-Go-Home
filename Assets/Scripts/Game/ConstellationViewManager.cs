@@ -12,17 +12,15 @@ public class ConstellationViewManager : MonoBehaviour {
 	public int mediumSpawn;
 	public int easySpawn;
 	public bool[] whichToTurnOn;
-	string focus1;
-	string focus2;
+	string focus{
+		get{
+			return gameManager.playerManager.playerLevelSelect.SelectedConstellationName;
+		}
+	}
 	bool simpleMode = true;
-	int howmanytoturnon = 5;
+	int howmanytoturnon = 0;
 
-	public void SetupScreen(string difficultyp1,string difficultyp2,string constname1, string constname2){//PlayerLevelSelect p1Selected, PlayerLevelSelect p2Selected){
-		//string difficultyp1 = p1Selected.selectObject.GetComponent<ConstellationManager>().constellation.difficulty;
-		//string difficultyp2 = p2Selected.selectObject.GetComponent<ConstellationManager>().constellation.difficulty;
-		focus1 = constname1;//p1Selected.SelectedConstellationName;
-		focus2 = constname2;//p2Selected.SelectedConstellationName;
-		Debug.Log(difficultyp1);
+	public void SetupScreen(string difficultyp,string constname){
 		System.Random random = new System.Random();
 		for(int i = 0; i < whichToTurnOn.Length; i++){
 			whichToTurnOn[i] = whichAlwaysOn[i];
@@ -30,7 +28,7 @@ public class ConstellationViewManager : MonoBehaviour {
 		int randomNumber1;
 		for(int i = 0; i < howmanytoturnon; i++){
 			randomNumber1 = random.Next(0,whichAlwaysOn.Length);
-			while(whichToTurnOn[randomNumber1] || (constellationManagers[randomNumber1].name == focus1)||(constellationManagers[randomNumber1].name == focus2)){
+			while(whichToTurnOn[randomNumber1] || (constellationManagers[randomNumber1].name == focus)){
 				randomNumber1 = random.Next(0,whichAlwaysOn.Length);
 			}
 			whichToTurnOn[randomNumber1] = true;
@@ -44,7 +42,7 @@ public class ConstellationViewManager : MonoBehaviour {
 			return;
 		}
 
-		if(difficultyp1 == "Insane" && difficultyp2 == "Insane"){
+		if(difficultyp == "Insane"){
 			for(int i = 0; i < whichToTurnOn.Length; i++){
 			if(whichToTurnOn[i]){
 				constellationManagers[i].DrawAllEdges();
@@ -53,16 +51,16 @@ public class ConstellationViewManager : MonoBehaviour {
 			return;
 		}
 		randomNumber1 = random.Next(0,whichAlwaysOn.Length);
-		while(whichToTurnOn[randomNumber1] || (constellationManagers[randomNumber1].name == focus1)||(constellationManagers[randomNumber1].name == focus2)){
+		while(whichToTurnOn[randomNumber1] || (constellationManagers[randomNumber1].name == focus)){
 			randomNumber1 = random.Next(0,whichAlwaysOn.Length);
 		}
 		whichToTurnOn[randomNumber1] = true;
 		randomNumber1 = random.Next(0,whichAlwaysOn.Length);
-		while(whichToTurnOn[randomNumber1] || (constellationManagers[randomNumber1].name == focus1)||(constellationManagers[randomNumber1].name == focus2)){
+		while(whichToTurnOn[randomNumber1] || (constellationManagers[randomNumber1].name == focus)){
 			randomNumber1 = random.Next(0,whichAlwaysOn.Length);
 		}
 		whichToTurnOn[randomNumber1] = true;
-		if(difficultyp1 == "Hard" || difficultyp2 == "Hard"){
+		if(difficultyp == "Hard"){
 			for(int i = 0; i < whichToTurnOn.Length; i++){
 			if(whichToTurnOn[i]){
 				constellationManagers[i].DrawAllEdges();
@@ -71,16 +69,16 @@ public class ConstellationViewManager : MonoBehaviour {
 			return;
 		}
 		randomNumber1 = random.Next(0,whichAlwaysOn.Length);
-		while(whichToTurnOn[randomNumber1] || (constellationManagers[randomNumber1].name == focus1)||(constellationManagers[randomNumber1].name == focus2)){
+		while(whichToTurnOn[randomNumber1] || (constellationManagers[randomNumber1].name == focus)){
 			randomNumber1 = random.Next(0,whichAlwaysOn.Length);
 		}
 		whichToTurnOn[randomNumber1] = true;
 		randomNumber1 = random.Next(0,whichAlwaysOn.Length);
-		while(whichToTurnOn[randomNumber1] || (constellationManagers[randomNumber1].name == focus1)||(constellationManagers[randomNumber1].name == focus2)){
+		while(whichToTurnOn[randomNumber1] || (constellationManagers[randomNumber1].name == focus)){
 			randomNumber1 = random.Next(0,whichAlwaysOn.Length);
 		}
 		whichToTurnOn[randomNumber1] = true;
-		if(difficultyp1 == "Medium" || difficultyp2 == "Medium"){
+		if(difficultyp == "Medium"){
 			for(int i = 0; i < whichToTurnOn.Length; i++){
 			if(whichToTurnOn[i]){
 				constellationManagers[i].DrawAllEdges();
@@ -89,12 +87,12 @@ public class ConstellationViewManager : MonoBehaviour {
 			return;
 		}
 		randomNumber1 = random.Next(0,whichAlwaysOn.Length);
-		while(whichToTurnOn[randomNumber1] || (constellationManagers[randomNumber1].name == focus1)||(constellationManagers[randomNumber1].name == focus2)){
+		while(whichToTurnOn[randomNumber1] || (constellationManagers[randomNumber1].name == focus)){
 			randomNumber1 = random.Next(0,whichAlwaysOn.Length);
 		}
 		whichToTurnOn[randomNumber1] = true;
 		randomNumber1 = random.Next(0,whichAlwaysOn.Length);
-		while(whichToTurnOn[randomNumber1] || (constellationManagers[randomNumber1].name == focus1)||(constellationManagers[randomNumber1].name == focus2)){
+		while(whichToTurnOn[randomNumber1] || (constellationManagers[randomNumber1].name == focus)){
 			randomNumber1 = random.Next(0,whichAlwaysOn.Length);
 		}
 		whichToTurnOn[randomNumber1] = true;
@@ -111,26 +109,17 @@ public class ConstellationViewManager : MonoBehaviour {
 			//check each
 			bool hasCompleted = constellationManagers[i].FinishedDrawing;
 			if(hasCompleted){
-				Debug.Log(name);
-				Debug.Log(focus1);
-				if(constellationManagers[i].name == focus1){
-					count ++;
-				}
-				if(constellationManagers[i].name == focus2){
+				if(constellationManagers[i].name == focus){
 					count ++;
 				}
 			}
 		}
-		Debug.Log(count);
-		return count >= 2;
+		return count >= 1;
 	}
 
 	public void UpdateSuccesses(){
 		for(int i = 0; i < imageSwitch.trophyList.Length; i++){
-			Debug.Log(imageSwitch.trophyList[i].name);
-			Debug.Log(focus1);
-			if(imageSwitch.trophyList[i].name == focus1 || imageSwitch.trophyList[i].name == focus2){
-				Debug.Log("It should update here");
+			if(imageSwitch.trophyList[i].name == focus){
 				imageSwitch.initOn[i] = true;
 			}
 		}
@@ -140,7 +129,6 @@ public class ConstellationViewManager : MonoBehaviour {
 	public void ResetGame(){
 		for(int i = 0; i < whichToTurnOn.Length; i++){
 			constellationManagers[i].DespawnConstellation();
-			Debug.Log(constellationManagers[i].FinishedDrawing);
 			whichToTurnOn[i] = false;
 		}
 	}

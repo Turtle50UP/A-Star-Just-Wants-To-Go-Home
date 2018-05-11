@@ -73,7 +73,6 @@ public class PlayerMove : AbstractBehavior {
         float amag = accel.magnitude;
 
         if(amag < epsilon){
-            //Debug.Log("breaking");
             Vector2 unit = velocity.normalized;
             unit *= -breakAccel * (isBreaking ? breakFactor : 1.0f);
             float velmag = velocity.magnitude;
@@ -103,10 +102,10 @@ public class PlayerMove : AbstractBehavior {
             float angle = Vector2.Angle(new Vector2(1.0f,0f),velocity) + (
                     velocity.y > 0 ? - 90f : +90f);
             angle *= velocity.y > 0 ? 1 : -1;
-            sprite.transform.eulerAngles = new Vector3(
+            /*sprite.transform.eulerAngles = new Vector3(
                 sprite.transform.eulerAngles.x,
                 sprite.transform.eulerAngles.y,
-                angle);
+                angle);*/
         }
         if(!gm.startingMenu){
             float mag = this.transform.position.magnitude;

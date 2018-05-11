@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerLevelSelect : AbstractBehavior {
+	//to make a commit
 	string playerSelect = "playerSelect";
 	GameObject selectedConstellation;
 	public ConstellationViewManager constellationViewManager;
@@ -21,7 +22,6 @@ public class PlayerLevelSelect : AbstractBehavior {
 	public Text constName;
 
 	public PlayerImageHandler thisplayerImageHandler;
-	public PlayerImageHandler otherplayerImageHandler;
 	public ConstellationImageManager constellationImageManager;
 	public string SelectedConstellationName{
 		get{
@@ -63,7 +63,6 @@ public class PlayerLevelSelect : AbstractBehavior {
 		color.w = (float)minalpha / 255f;
 		sr.color = color;
 		thisplayerImageHandler.SetCorrectImage("");
-		otherplayerImageHandler.SetCorrectImage("");
 		ybutton.canvasRenderer.SetAlpha(0);
 		difficulty.canvasRenderer.SetAlpha(0);
 		constName.text = "";
@@ -74,19 +73,17 @@ public class PlayerLevelSelect : AbstractBehavior {
 	public void Deselect(){
 		selectedConstellation.GetComponent<TrophySelect>().isSelected = false;
 		selectedConstellation = null;
-		//Debug.Log("Deselected");
 		SpriteRenderer sr = selectObject.transform.GetChild(0).GetComponent<SpriteRenderer>();
 		Vector4 color = sr.color;
 		color.w = (float)minalpha/255f;
 		sr.color = color;
 		thisplayerImageHandler.SetCorrectImage("");
-		otherplayerImageHandler.SetCorrectImage("");
 		ybutton.canvasRenderer.SetAlpha(0);
 		difficulty.canvasRenderer.SetAlpha(0);
 		constName.canvasRenderer.SetAlpha(0);
 	}
 
-	void Select(GameObject temp){
+	public void Select(GameObject temp){
 		selectedConstellation = temp;
 		selectObject.transform.position = new Vector3(
 			selectedConstellation.transform.position.x + selectObjectOffset,
@@ -99,19 +96,14 @@ public class PlayerLevelSelect : AbstractBehavior {
 		sr.color = color;
 		temp.GetComponent<TrophySelect>().isSelected = true;
 		thisplayerImageHandler.SetCorrectImage(SelectedConstellationName);
-		otherplayerImageHandler.SetCorrectImage(SelectedConstellationName);
 		ybutton.canvasRenderer.SetAlpha(1);
 		difficulty.canvasRenderer.SetAlpha(1);
 		constName.canvasRenderer.SetAlpha(1);
 		difficulty.text = CorrespondingCVMDifficulty;
 		constName.text = SelectedConstellationName;
 	}
+
 	void FixedUpdate () {
-		if(!gm.startingMenu){
-			ybutton.canvasRenderer.SetAlpha(0);
-			difficulty.canvasRenderer.SetAlpha(0);
-			constName.canvasRenderer.SetAlpha(0);
-		}
 		if(selectedConstellation != null && inputState.GetButtonValue(inputButtons[1])){
 			startGameSelected = true;
 			return;

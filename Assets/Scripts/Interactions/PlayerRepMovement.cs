@@ -36,10 +36,10 @@ public class PlayerRepMovement : MonoBehaviour {
 			float angle = Vector2.Angle(new Vector2(1.0f,0f),velocity) + (
 						velocity.y > 0 ? - 90f : +90f);
 			angle *= velocity.y > 0 ? 1 : -1;
-			sprite.transform.eulerAngles = new Vector3(
+			/*sprite.transform.eulerAngles = new Vector3(
 				sprite.transform.eulerAngles.x,
 				sprite.transform.eulerAngles.y,
-				angle);
+				angle);*/
 		}
 	}
 }

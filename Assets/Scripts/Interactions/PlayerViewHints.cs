@@ -18,7 +18,6 @@ public class PlayerViewHints : AbstractBehavior {
 			if(inputState.GetButtonValue(inputButtons[0])){
 				if(inputState.GetButtonHoldTime(inputButtons[0]) < gm.epsilon){
 					viewingHints = true;
-					Debug.Log("Viewing Hints");
 				}
 			}
 		}
@@ -26,11 +25,13 @@ public class PlayerViewHints : AbstractBehavior {
 			if(inputState.GetButtonValue(inputButtons[0])){
 				if(inputState.GetButtonHoldTime(inputButtons[0]) < gm.epsilon){
 					viewingHints = false;
-					Debug.Log("Stopped Viewing Hints");
 				}
 			}
-			if(inputState.GetButtonValue(inputButtons[1])){
+		}
+		if(inputState.GetButtonValue(inputButtons[1])){
 				if(inputState.GetButtonHoldTime(inputButtons[1]) < gm.epsilon){
+					gm.acm.SelectPrevConstellation();
+
 					if(numViewing - 1 < 0){
 						numViewing = cameraHintPositionManager.cameraViews.Length - 1;
 					}
@@ -41,6 +42,8 @@ public class PlayerViewHints : AbstractBehavior {
 			}
 			if(inputState.GetButtonValue(inputButtons[2])){
 				if(inputState.GetButtonHoldTime(inputButtons[2]) < gm.epsilon){
+					gm.acm.SelectNextConstellation();
+
 					if(numViewing + 1 >= cameraHintPositionManager.cameraViews.Length){
 						numViewing = 0;
 					}
@@ -49,6 +52,5 @@ public class PlayerViewHints : AbstractBehavior {
 					}
 				}
 			}
-		}
 	}
 }

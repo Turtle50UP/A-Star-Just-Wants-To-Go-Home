@@ -8,7 +8,6 @@ public class PlayerDrawLine : AbstractBehavior {
 	string starPickup = "starPickup";
 	public GameObject edge;
 	public SingleSpawner edgeSpawner;
-	//public PlayerExpressionManager playerExpressionManager;
 	public AudioClip lineDrawn;
 	public AudioClip lineBroken;
 	public AudioArrayHandler audioArray;
@@ -19,15 +18,18 @@ public class PlayerDrawLine : AbstractBehavior {
 	bool DrawConstellationLine(GameObject otherStar){
 		edgeSpawner.Despawn();
 		edge = null;
-		selectedStar = null;
 		if(otherStar == null){
+			selectedStar = null;
 			return false;
 		}
 		StarDetails sd1 = selectedStar.GetComponent<StarDetails>();
 		StarDetails sd2 = otherStar.GetComponent<StarDetails>();
-		if(sd1.cm == sd2.cm){
-			bool didSecceed = sd1.cm.DrawEdge(sd1.index,sd2.index);
-			return didSecceed;
+		selectedStar = null;
+		if(sd1.groupName == sd2.groupName || sd2.groupName.Contains(sd1.groupName)){
+			return sd1.cm.DrawEdge(sd1.index,sd2.index);
+		}
+		else if(sd1.groupName.Contains(sd2.groupName)){
+			return sd2.cm.DrawEdge(sd1.index,sd2.index);
 		}
 		return false;
 	}
@@ -59,7 +61,6 @@ public class PlayerDrawLine : AbstractBehavior {
 			edge.transform.position = midpoint;
 		}
 	}
-
 	public void ResetEdge(){
 		DrawConstellationLine(null);
 	}
@@ -81,18 +82,15 @@ public class PlayerDrawLine : AbstractBehavior {
 				edge = null;
 			}
 		}
-		if(collisionState.colliderStatus[starPickup]){
-			if(inputState.GetButtonValue(inputButtons[0])){
-//				Debug.Log("Button Pressed");
+		if(inputState.GetButtonValue(inputButtons[0])){
+			if(collisionState.colliderStatus[starPickup]){
 				Collider2D[] collmems = collisionState.collidingMembers[starPickup];
 				GameObject temp = GetClosestCollidingMember(collmems);
 				if(inputState.GetButtonHoldTime(inputButtons[0]) < gm.epsilon){
 					if(selectedStar == null){
-						Debug.Log("Selected Star");
 						selectedStar = temp;
 					}
 					else if(selectedStar != temp){
-						Debug.Log("Attempt To Draw Line");
 						bool res = DrawConstellationLine(temp);
 						if(res){
 							plm.playerExpressionManager.Glee();
@@ -105,9 +103,11 @@ public class PlayerDrawLine : AbstractBehavior {
 					}
 					else{
 						selectedStar = null;
-						Debug.Log("Deselected");
 					}
 				}
+			}
+			else{
+				ResetEdge();
 			}
 		}
 	}

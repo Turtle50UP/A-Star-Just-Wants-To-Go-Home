@@ -36,14 +36,12 @@ public class ObjectTracker{
             this.y = float.Parse(stringData[1]);
             this.groupName = stringData[2];
             this.prefabName = stringData[3];
-            Debug.Log("Correct Format");
         }
         else{
             this.x = 0f;
             this.y = 0f;
             this.groupName = "null";
             this.prefabName = "null";
-            Debug.Log("ERROR: Incorrect data amount");
         }
         this.isOn = false;
     }

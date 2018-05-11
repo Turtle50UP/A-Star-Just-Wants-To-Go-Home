@@ -65,7 +65,6 @@ public class CollisionState : MonoBehaviour {
                 isColliding = temp == 0;
             }
             if(isColliding){
-                //Debug.Log("IS COLLIDING");
                 if (timeColliding < 0f){
                     timeCollided = Time.time;
                 }
@@ -156,7 +155,6 @@ public class CollisionState : MonoBehaviour {
                     return input;
                 }
             }
-            Debug.Log("THIS IS AN ERROR, COLLIDER EXISTS IN DICTIONARY ONLY");
             return null;
         }
         else{

@@ -34,7 +34,6 @@ public class AbstractSpawner : MonoBehaviour {
 		foreach(PrefabContainer prefab in prefabs){
 			if(string.Compare(name, prefab.name) == 0){
 				toSpawn = prefab.prefab;
-				//Debug.Log("Spawned!");
 			}
 		}
 		if(toSpawn != null){
@@ -43,7 +42,6 @@ public class AbstractSpawner : MonoBehaviour {
         	spawnedList.Add(goc);
 			return go;
 		}   
-		//Debug.Log("Not Spawned!");
 		return null;
 	}
 

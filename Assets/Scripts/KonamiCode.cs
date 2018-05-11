@@ -48,7 +48,6 @@ public class KonamiCode : AbstractBehavior {
 			//}
 		}
 		else if(konami == "^^v"){
-			Debug.Log("LOLKONAMI");
 			if(inputState.GetButtonValue(inputButtons[1])) //down
 			{
 				konami = "^^vv";

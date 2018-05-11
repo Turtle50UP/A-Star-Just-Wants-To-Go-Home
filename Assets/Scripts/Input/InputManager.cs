@@ -38,8 +38,6 @@ public class InputAxisState{
     public bool value{
         get{
             float axisVal = Input.GetAxis(axisName);  //Issue with input, release does not go right to zero
-            bool leftpressed = Input.GetKey(KeyCode.A);
-            bool rightpressed = Input.GetKey(KeyCode.D);
             switch (condition)
             {
                 case Cond.Greater:

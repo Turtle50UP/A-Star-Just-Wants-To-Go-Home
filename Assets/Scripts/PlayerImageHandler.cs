@@ -9,7 +9,6 @@ public class PlayerImageHandler : MonoBehaviour {
 
 	public void SetCorrectImage(string ofinterest){
 		foreach(Image i in constellationImgs){
-			Debug.Log(i.name);
 			if(i.name == ofinterest){
 				i.canvasRenderer.SetAlpha(1.0f);
 			}
